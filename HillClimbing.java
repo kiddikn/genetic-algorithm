@@ -6,6 +6,7 @@ public class HillClimbing{
 	public int[][] graph;       //グラフ
 	static int[] solution;      //解候補
 	public int[] vData;
+	int count=0;
 	Random rnd = new Random();
 
 	public void setGraph(int mat[][]){
@@ -102,17 +103,19 @@ public class HillClimbing{
 		rnd.setSeed(this.seed);
 	}
 
+	public void setvData(){
+		//vDataは違反点数vを保管しておく配列、一番上で定義
+		vData = new int[10000];
+		for(int z=0;z < 10000;z++)
+			vData[z]=0;
+	}
 
-  //単体のHCを実行するメソッド
+	//単体のHCを実行するメソッド
 	public int simulateHC(int m,int repetition){
 		this.repetition = repetition;
 		this.m = m;
-		//vDataは違反点数vを保管しておく配列、一番上で定義
-		//vData = new int[repetition];
-		//for(int z=0;z < repetition;z++)
-			//vData[z]=0;
 		//step2 終了判定
-		int i=0,state=0,v=1,tmpV = 10000,count=0;
+		int i=0,state=0,v=1,tmpV = 10000;
 		//以下を変更。無限ループにして0か変化無しが100回連続になるまで繰り返す
 		while(i<repetition){
 			//for(i = 0;i < repetition;i++){
@@ -125,7 +128,7 @@ public class HillClimbing{
 			}
 			//下は散布図用
 			//System.out.println(v);
-			//vData[count]=v;
+			vData[count]=v;
 			if(v == 0){
 				state = 1;
 				break;
@@ -139,7 +142,7 @@ public class HillClimbing{
 		if(state==1){
 			System.out.println("success");
 			System.out.println("Node:"+n+",Repetition Count:"+count);
-			//Output.exCsv_Graph(vData);
+			Output.exCsv_Graph(vData);
 			return i;
 		}else{
 			System.out.println("failure");
