@@ -112,9 +112,17 @@ public class HillClimbing{
 		//for(int z=0;z < repetition;z++)
 			//vData[z]=0;
 		//step2 終了判定
-		int i,state=0,v=1;
-		for(i = 0;i < repetition;i++){
+		int i=0,state=0,v=1,tmpV = 10000;
+		//以下を変更。無限ループにして0か変化無しが100回連続になるまで繰り返す
+		while(i<repetition){
+			//for(i = 0;i < repetition;i++){
 			v = addVio();
+			if(tmpV==v){
+				i++;
+			}else{
+				i=0;
+				tmpV=v;
+			}
 			//下は散布図用
 			//System.out.println(v);
 			//vData[i]=v;
@@ -124,12 +132,13 @@ public class HillClimbing{
 			}
 			//step3 変数の選択,step4値の選択
 			violation(v);
+			//}
 		}
 		//step5
 		if(state==1){
 			System.out.println("success");
 			System.out.println("Node:"+n+",Repetition Count:"+i);
-		  //Output.exCsv_Graph(vData);
+			//Output.exCsv_Graph(vData);
 			return i;
 		}else{
 			System.out.println("failure");
