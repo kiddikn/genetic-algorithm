@@ -14,22 +14,19 @@ public class Wk2ihc{
 
 		//IHCではrestart
 		//色塗り問題の生成
-		repetition = 200;
-		//for(int k = 0;k < 10;k++){
-			//node =nodes[k];
-	//		System.out.println("---------------node:"+node+"----------------");
+		repetition = 1000;
+		for(int k = 0;k < 5;k++){
+			node =nodes[k];
+			System.out.println("---------------node:"+node+"----------------");
 			HillClimbing hc = new HillClimbing();
-			//for(int so = 0;so < 10;so++){
-				//seed = seeds[so];
-				//System.out.println("seed:"+seeds[so]);   
-			seed=157;
-			node=30;	
-			Matrix mat = new Matrix();
+			for(int so = 0;so < 10;so++){
+				seed = seeds[so];
+				System.out.println("seed:"+seeds[so]);   
+				Matrix mat = new Matrix();
 				m = 3 * node;        //疎結合
 				//m = node*(node-1)/4;   //密結合
 				mat.setMatrix(node,m,149);
 				mat.makeMatrix();
-				hc.setvData();
 				hc.setGraph(mat.getMat());
 				System.out.println("疎結合");            
 				hc.setSeed(seed);
@@ -37,12 +34,13 @@ public class Wk2ihc{
 				int a=0;
 				for(restart=0;restart<10;restart++){
 					hc.setSolution(node);
+					hc.setCount();
 					a=hc.simulateHC(m,repetition);
 					if(a!=0)break;
 				}
 			}
 		}
-	//}
-//}
+	}
+}
 
 
