@@ -125,7 +125,7 @@ public class HillClimbing{
 			}
 			//下は散布図用
 			//System.out.println(v);
-			//vData[i]=v;
+			//vData[count]=v;
 			if(v == 0){
 				state = 1;
 				break;
