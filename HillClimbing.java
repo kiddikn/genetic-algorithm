@@ -2,11 +2,10 @@
 import java.util.*;
 
 public class HillClimbing{
-	public int n,m,v=0,v1,v2,seed,repetition;
+	public int n,m,v=0,v1,v2,seed,repetition,count;
 	public int[][] graph;       //グラフ
 	static int[] solution;      //解候補
 	public int[] vData;
-	int count=0;
 	Random rnd = new Random();
 
 	public void setGraph(int mat[][]){
@@ -49,6 +48,10 @@ public class HillClimbing{
 		map.put(1,cColor1);
 		map.put(2,cColor2);
 		solution[nextValue] = map.get(min(v,v1,v2));
+	}
+
+	public void setCount(){
+		count = 0;
 	}
 
 	//違反点数v,v1,v2をもとに最小になる値のインデックスを返す
@@ -118,7 +121,6 @@ public class HillClimbing{
 		int i=0,state=0,v=1,tmpV = 10000;
 		//以下を変更。無限ループにして0か変化無しが100回連続になるまで繰り返す
 		while(i<repetition){
-			//for(i = 0;i < repetition;i++){
 			v = addVio();
 			if(tmpV==v){
 				i++;
@@ -128,7 +130,7 @@ public class HillClimbing{
 			}
 			//下は散布図用
 			//System.out.println(v);
-			vData[count]=v;
+			//vData[count]=v;
 			if(v == 0){
 				state = 1;
 				break;
@@ -136,14 +138,13 @@ public class HillClimbing{
 			//step3 変数の選択,step4値の選択
 			violation(v);
 			count++;
-			//}
 		}
 		//step5
 		if(state==1){
 			System.out.println("success");
 			System.out.println("Node:"+n+",Repetition Count:"+count);
-			Output.exCsv_Graph(vData);
-			return i;
+			//	Output.exCsv_Graph(vData);
+			return count;
 		}else{
 			System.out.println("failure");
 			return 0;
