@@ -14,7 +14,7 @@ public class Wk2{
 		//IHCではrestart
 		//色塗り問題の生成
 		node = 120;
-		repetition = 1200;
+		repetition = 200;
 		int l = 0;//すべてのデータを配列にいれて保管するための変数
 		for(int k = 0;k <5;k++){
 			node = nodes[k];
@@ -32,6 +32,7 @@ public class Wk2{
 				hc.setGraph(mat.getMat());
 				System.out.println("密結合");   
 				hc.setSeed(seed);
+				hc.setCount();
 				hc.setSolution(node);
 				dataReport[l][den]=hc.simulateHC(m,repetition);
 				}
@@ -47,6 +48,7 @@ public class Wk2{
 				System.out.println("疎結合");            
 				System.out.println("seed:"+seeds[so]);
 				hc.setSeed(seed);
+				hc.setCount();
 				hc.setSolution(node);
 				dataReport[l][so]=hc.simulateHC(m,repetition);
 			}
