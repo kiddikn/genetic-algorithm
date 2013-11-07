@@ -37,16 +37,19 @@ public class EScomma{
 			/*for(int k = 0;k<node;k++)
 				System.out.print(" "+solution[k]);
 			System.out.println();*/
-			myuData[i] = new Solution(node,graph,solution);
+			myuData[i] = new Solution(node,graph);
+			myuData[i].setSolution(solution);
 			/*for(int k = 0;k<node;k++)        
 				System.out.print("*"+myuData[i].solution[k]);   
 			System.out.println(); */
 		}
+		for(int i = 0;i < lambda;i++)
+			lambdaData[i] = new Solution(node,graph);
 		/*for(int i = 0;i < myu;i++){
 			for(int j = 0;j<node;j++)
 				System.out.print(myuData[i].solution[j]);
 			System.out.println();
-		}*/
+			}*/
 	}
 
 	//lambda回突然変異3回ランダム値作成
@@ -58,22 +61,21 @@ public class EScomma{
 			/*lambdaData[count] = 
 				new Solution(node,graph,myuData[randMyu].solution);
 				*/
-			for(int i = 0;i < node;i++)
+			for(int i =0;i<node;i++)
 				solution[i] = myuData[randMyu].solution[i];
-			lambdaData[count] =  
-				new Solution(node,graph,solution); 
+			lambdaData[count].setSolution(solution); 
 
-		for(int k = 0;k<node;k++)     
-				System.out.print(lambdaData[count].solution[k]);  
-			System.out.println();
+			//for(int k = 0;k<node;k++)     
+			//System.out.print(lambdaData[count].solution[k]);  
+			//System.out.println();
 			//dump(myuData[randMyu].solution);
 			while(true){
 				randColor = rnd.nextInt(3);
 				if(myuData[randMyu].solution[randPos]!=randColor)
 					break;
 			}
-		//	lambdaData[count].mutate(randPos,randColor);
-		//	dump(lambdaData[count]);   
+			lambdaData[count].mutate(randPos,randColor);
+			//	dump(lambdaData[count]);   
 		}
 		System.out.println();         
 	}
