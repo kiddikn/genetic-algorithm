@@ -1,20 +1,38 @@
 import java.util.*;
 
 public class Solution{
-	int node,v;
-	public int[][] graph;
+	static int node;
+	public int v;
+	static int[][] graph;
 	//できればprivateにしてセッターをつくる
 	//staticにしたらクラス間で共有される
 	public int[] solution;
 
 	Random rnd = new Random();
-	Solution(int node,int[][] mat,int[] sol){
-		this.node = node;	
-		solution  = new int[node];
-		for(int i = 0;i < this.node;i++)
+/*	Solution(int[] sol){
+		for(int i = 0;i < node;i++)
 			solution[i] = sol[i];
 		v = 0;
+	}*/
+
+	Solution(int node,int[][] mat){
+		this.node = node;
 		this.graph = mat;
+		solution = new int[node];
+		for(int i = 0;i < node;i++)
+			solution[i] = 0;
+		v = 0;
+	}
+
+	public void setSolution(int[] sol){
+		for(int i = 0;i < node;i++)
+			solution[i] = sol[i];
+	}
+
+	public void setStaticValue(int node,int[][] mat){
+		this.node = node;
+		this.graph = mat;
+		solution  = new int[this.node];
 	}
 
 	public int getSolutionValue(int pos){
