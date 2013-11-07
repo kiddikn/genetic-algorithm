@@ -74,10 +74,16 @@ public class EScomma{
 				if(myuData[randMyu].solution[randPos]!=randColor)
 					break;
 			}
+			//System.out.print(randMyu+"--");
+			//System.out.print(randPos);
+			//			dump(lambdaData[count].solution);
+			//		System.out.print("randMyu"+randMyu+"randPos"+randPos+"randColor"+randColor);
+			//	System.out.println();
 			lambdaData[count].mutate(randPos,randColor);
+			// dump(lambdaData[count].solution);
+			//System.out.println();    
 			//	dump(lambdaData[count]);   
 		}
-		System.out.println();         
 	}
 
 	//n+1世代目選出のためのソートを行う
@@ -92,8 +98,12 @@ public class EScomma{
 		//for(int i = 0;i < lambda;i++)  
 			//dump(lambdaData[i]);	
 		int testV = lambdaData[0].v;
-		for(int i = 0;i < myu;i++)
-			myuData[i] = lambdaData[i];
+		for(int i = 0;i < myu;i++){
+			for(int j = 0;j < node;j++){
+				solution[j] = lambdaData[i].solution[j];
+			}
+			myuData[i].setSolution(solution);
+		}
 		return testV;
 	}
 
