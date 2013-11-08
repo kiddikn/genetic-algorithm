@@ -2,7 +2,7 @@
 import java.util.*;
 
 public class EScomma{
-	public int node,v=0,seed,step,myu,lambda;
+	public int node,v=0,seed,step,myu,lambda,max;
 	public int[][] graph;       //グラフ
 	static int[] solution;      //解候補
 	public Solution[] myuData;     //solutionを作成し、コピーする
@@ -14,20 +14,27 @@ public class EScomma{
 		graph = mat;
 	}
 
-	public void setValue(int seed,int node,int myu,int lambda,int step){
+	public void setValue(int seed,int node,int myu,int lambda,int step,String flag){
 		this.node = node;
 		this.myu = myu;
 		this.lambda = lambda;
 		this.step = step;
 		this.seed = seed;
 		rnd.setSeed(this.seed);
+		if(flag=="comma"){
+			max = lambda;
+		}else if(flag == "plus"){
+			max = lambda + myu;
+		}else{
+			System.out.println("we cannot start this algorithm");
+		}
 	}
   
 	//初期値の設定。1世代目の作成
 	//[]myu個目のsolution,[][]番目の色
 	public void setFirstGene(){
 		myuData = new Solution[myu];
-		lambdaData = new Solution[lambda];
+		lambdaData = new Solution[max];
 		solution = new int[node];
 		for(int l = 0;l < node;l++)
 			solution[l]=0;
@@ -43,7 +50,7 @@ public class EScomma{
 				System.out.print("*"+myuData[i].solution[k]);   
 			System.out.println(); */
 		}
-		for(int i = 0;i < lambda;i++)
+		for(int i = 0;i < max;i++)
 			lambdaData[i] = new Solution(node,graph);
 		/*for(int i = 0;i < myu;i++){
 			for(int j = 0;j<node;j++)
@@ -54,7 +61,7 @@ public class EScomma{
 
 	//lambda回突然変異3回ランダム値作成
 	public void mutation(){
-		for(int count = 0;count < lambda;count++){
+		for(int count = 0;count < max;count++){
 			int randMyu = rnd.nextInt(myu);
 			int randPos = rnd.nextInt(node);  
 			int randColor = 1;
@@ -80,23 +87,19 @@ public class EScomma{
 			//		System.out.print("randMyu"+randMyu+"randPos"+randPos+"randColor"+randColor);
 			//	System.out.println();
 			lambdaData[count].mutate(randPos,randColor);
-			// dump(lambdaData[count].solution);
+			//dump(lambdaData[count].solution);
 			//System.out.println();    
-			//	dump(lambdaData[count]);   
 		}
+		System.out.println("*****");  
 	}
 
 	//n+1世代目選出のためのソートを行う
 	public int sortSolution(){
 		//lambdaDataのソートを行う。違反点数の数でソートしたい
-		/////////////////**************************************************//////
-		for(int i = 0;i < lambda;i++){
+		for(int i = 0;i < max;i++){
 			lambdaData[i].addVio();
-		//	System.out.println(lambdaData[i].v);
 		}
 		Arrays.sort(lambdaData,new MyComparator());
-		//for(int i = 0;i < lambda;i++)  
-			//dump(lambdaData[i]);	
 		int testV = lambdaData[0].v;
 		for(int i = 0;i < myu;i++){
 			for(int j = 0;j < node;j++){
@@ -109,24 +112,21 @@ public class EScomma{
 
 	public int getVioMaxNumber(){
 		//実装する
-		//lambdaData[max].v
-		return 1000;
+		return myuData[myu].v;
 	}
 
 	public int getAverageNumber(){
 		//実装する
-		//for(int i = 0;i < max(lambdaかlambda+myu);i++)
-		//tmp=0;
-		//tmp+=lambdaData[i].v;
-		//tmp/=max;
-		//return tmp; 
-		return 1000;
+		int tmp=0;
+		for(int i = 0;i < myu;i++)
+			tmp+=myuData[i].v;
+		tmp/=myu;
+		return tmp; 
 	}
 
 	public int getVioMinNumber(){
 		//実装する
-		//lambdaData[0].v
-		return 1000;
+		return myuData[0].v;
 	}
 
 	public void dump(int[] s){
@@ -139,12 +139,12 @@ public class EScomma{
 	public static void main(String args[]){
 		EScomma test1 = new EScomma();
 		Matrix mat = new Matrix();
-		int node = 30,m = node*(node-1)/4;
+		int node = 60,m = node*(node-1)/4;
 		mat.setMatrix(node,m,149);
 		mat.makeMatrix();
 		test1.setGraph(mat.getMat());
-		//setValue(int seed,int node,int myu,int lambda,int step)
-		test1.setValue(157,node,10,100,1000);
+		//setValue(seed,node,myu,lambda,step,String flag)
+		test1.setValue(151,node,100,1000,150,"comma");
 		test1.setFirstGene();
 		int count = 0;
 		int tesv = 1110;
