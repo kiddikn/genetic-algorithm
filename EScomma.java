@@ -5,6 +5,7 @@ public class EScomma{
 	public int node,v=0,seed,step,myu,lambda,max;
 	public int[][] graph;       //グラフ
 	static int[] solution;      //解候補
+	public String flag;
 	public Solution[] myuData;     //solutionを作成し、コピーする
 	public Solution[] lambdaData;
 
@@ -20,6 +21,7 @@ public class EScomma{
 		this.lambda = lambda;
 		this.step = step;
 		this.seed = seed;
+		this.flag = flag;
 		rnd.setSeed(this.seed);
 		if(flag=="comma"){
 			max = lambda;
@@ -34,64 +36,61 @@ public class EScomma{
 	//[]myu個目のsolution,[][]番目の色
 	public void setFirstGene(){
 		myuData = new Solution[myu];
-		lambdaData = new Solution[max];
+		if(flag == "plus")
+			lambdaData = new Solution[max];
+		else if(flag == "comma")
+			lambdaData = new Solution[lambda];
 		solution = new int[node];
-		for(int l = 0;l < node;l++)
-			solution[l]=0;
 		for(int i = 0;i < myu;i++){
 			for(int j = 0;j < this.node;j++)
 				solution[j] = rnd.nextInt(3);
-			/*for(int k = 0;k<node;k++)
-				System.out.print(" "+solution[k]);
-			System.out.println();*/
 			myuData[i] = new Solution(node,graph);
 			myuData[i].setSolution(solution);
-			/*for(int k = 0;k<node;k++)        
-				System.out.print("*"+myuData[i].solution[k]);   
-			System.out.println(); */
 		}
 		for(int i = 0;i < max;i++)
 			lambdaData[i] = new Solution(node,graph);
-		/*for(int i = 0;i < myu;i++){
-			for(int j = 0;j<node;j++)
-				System.out.print(myuData[i].solution[j]);
-			System.out.println();
-			}*/
 	}
 
 	//lambda回突然変異3回ランダム値作成
 	public void mutation(){
-		for(int count = 0;count < max;count++){
+		for(int count = 0;count < lambda;count++){
 			int randMyu = rnd.nextInt(myu);
 			int randPos = rnd.nextInt(node);  
 			int randColor = 1;
-			/*lambdaData[count] = 
-				new Solution(node,graph,myuData[randMyu].solution);
-				*/
 			for(int i =0;i<node;i++)
 				solution[i] = myuData[randMyu].solution[i];
 			lambdaData[count].setSolution(solution); 
 
-			//for(int k = 0;k<node;k++)     
-			//System.out.print(lambdaData[count].solution[k]);  
-			//System.out.println();
-			//dump(myuData[randMyu].solution);
 			while(true){
 				randColor = rnd.nextInt(3);
 				if(myuData[randMyu].solution[randPos]!=randColor)
 					break;
 			}
-			//System.out.print(randMyu+"--");
-			//System.out.print(randPos);
-			//			dump(lambdaData[count].solution);
-			//		System.out.print("randMyu"+randMyu+"randPos"+randPos+"randColor"+randColor);
-			//	System.out.println();
 			lambdaData[count].mutate(randPos,randColor);
-			//dump(lambdaData[count].solution);
-			//System.out.println();    
 		}
-		System.out.println("*****");  
 	}
+	public void mutation_plus(){
+		for(int i = 0;i < myu;i++){
+			for(int j = 0;j < node;j++)
+				solution[j] = myuData[i].solution[j];
+			lambdaData[i].setSolution(solution);
+		}
+		for(int count = myu;count < max;count++){
+			int randMyu = rnd.nextInt(myu); 
+			int randPos = rnd.nextInt(node);  
+			int randColor = 1; 
+			for(int i =0;i<node;i++)            
+				solution[i] = myuData[randMyu].solution[i];     
+			lambdaData[count].setSolution(solution);      
+			while(true){                
+				randColor = rnd.nextInt(3);      
+				if(myuData[randMyu].solution[randPos]!=randColor)  
+					break;      
+			}
+			lambdaData[count].mutate(randPos,randColor);            
+		}
+	}
+
 
 	//n+1世代目選出のためのソートを行う
 	public int sortSolution(){
@@ -100,6 +99,9 @@ public class EScomma{
 			lambdaData[i].addVio();
 		}
 		Arrays.sort(lambdaData,new MyComparator());
+		for(int k=0;k<max;k++)
+			System.out.print(lambdaData[k].v+"-");
+		System.out.println();
 		int testV = lambdaData[0].v;
 		for(int i = 0;i < myu;i++){
 			for(int j = 0;j < node;j++){
@@ -144,14 +146,14 @@ public class EScomma{
 		mat.makeMatrix();
 		test1.setGraph(mat.getMat());
 		//setValue(seed,node,myu,lambda,step,String flag)
-		test1.setValue(151,node,100,1000,150,"comma");
+		test1.setValue(151,node,100,1000,150,"plus");
 		test1.setFirstGene();
 		int count = 0;
 		int tesv = 1110;
 		for(int i = 0;i < 1000;i++){
       //繰り返し回数
 			count++;
-			test1.mutation();
+			test1.mutation_plus();
 			tesv = test1.sortSolution();
 			//ここにgetVioMaxNumberとgetVioMinNumber
 			if(tesv == 0){
