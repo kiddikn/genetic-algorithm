@@ -4,7 +4,7 @@ import java.util.*;
 public class EScomma{
 	public int node,v=0,seed,step,myu,lambda,max;
 	public int[][] graph;       //グラフ
-	static int[] solution;      //解候補
+	public int[] solution;      //解候補
 	public String flag;
 	public Solution[] myuData;     //solutionを作成し、コピーする
 	public Solution[] lambdaData;
@@ -67,6 +67,8 @@ public class EScomma{
 					break;
 			}
 			lambdaData[count].mutate(randPos,randColor);
+			//dump(lambdaData[count].solution);
+			//System.out.println();
 		}
 	}
 	public void mutation_plus(){
@@ -99,9 +101,10 @@ public class EScomma{
 			lambdaData[i].addVio();
 		}
 		Arrays.sort(lambdaData,new MyComparator());
-		for(int k=0;k<max;k++)
-			System.out.print(lambdaData[k].v+"-");
-		System.out.println();
+		//for(int k=0;k<max;k++)
+			//System.out.print(lambdaData[k].v+"-");
+			//System.out.print(lambdaData[0].v);
+		//System.out.println();
 		int testV = lambdaData[0].v;
 		for(int i = 0;i < myu;i++){
 			for(int j = 0;j < node;j++){
@@ -139,30 +142,43 @@ public class EScomma{
 
 
 	public static void main(String args[]){
-		EScomma test1 = new EScomma();
+	  EScomma[] test = new EScomma[50];
 		Matrix mat = new Matrix();
-		int node = 60,m = node*(node-1)/4;
-		mat.setMatrix(node,m,149);
-		mat.makeMatrix();
-		test1.setGraph(mat.getMat());
-		//setValue(seed,node,myu,lambda,step,String flag)
-		test1.setValue(151,node,100,1000,150,"plus");
-		test1.setFirstGene();
-		int count = 0;
-		int tesv = 1110;
-		for(int i = 0;i < 1000;i++){
-      //繰り返し回数
-			count++;
-			test1.mutation_plus();
-			tesv = test1.sortSolution();
-			//ここにgetVioMaxNumberとgetVioMinNumber
-			if(tesv == 0){
-				System.out.println("success!!count ="+count);
-				break;
+		int[] seeds = {113,127,131,139,151,157,163,251,257,271};
+		int[] nodes = {30,60,90,120,150};
+		int testcount = 0;
+		///////////////////////////////////////////////////////
+		for(int i = 0;i < nodes.length;i++){
+			for(int j = 0;j < seeds.length;j++){//jはseeds
+				int node = nodes[i];
+				//int m = node * 3;
+				int m = node*(node-1)/4;
+				mat.setMatrix(node,m,149);
+				mat.makeMatrix();
+				test[testcount] = new EScomma();
+				test[testcount].setGraph(mat.getMat());
+				//setValue(seed,node,myu,lambda,step,String flag)
+				//あとでstep削除
+				test[testcount].setValue(seeds[j],node,10,100,150,"comma");
+				test[testcount].setFirstGene();
+				int count = 0;
+				int tesv = 1110;
+				while(count < 1000){
+					//繰り返し回数
+					count++;
+					test[testcount].mutation();
+					tesv = test[testcount].sortSolution();
+					//ここにgetVioMaxNumberとgetVioMinNumber
+					if(tesv == 0){
+						System.out.println("success!!"+"node:"+node+"seed:"+seeds[j]+"**count ="+count);
+						break;
+					}
+				}
+				if(tesv != 0){
+					System.out.println("fail");
+				}
+				testcount++;
 			}
-		}
-		if(tesv != 0){
-			System.out.println("fail");
 		}
 	}
 
