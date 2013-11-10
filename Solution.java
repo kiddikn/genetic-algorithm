@@ -1,10 +1,10 @@
+//Solution.java
 import java.util.*;
 
 public class Solution{
 	static int node;
 	public int v;
 	static int[][] graph;
-	//できればprivateにしてセッターをつくる
 	//staticにしたらクラス間で共有される
 	public int[] solution;
 
