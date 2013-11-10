@@ -9,11 +9,6 @@ public class Solution{
 	public int[] solution;
 
 	Random rnd = new Random();
-/*	Solution(int[] sol){
-		for(int i = 0;i < node;i++)
-			solution[i] = sol[i];
-		v = 0;
-	}*/
 
 	Solution(int node,int[][] mat){
 		this.node = node;
@@ -21,12 +16,16 @@ public class Solution{
 		solution = new int[node];
 		for(int i = 0;i < node;i++)
 			solution[i] = 0;
-		v = 0;
+		v = 100;
 	}
 
 	public void setSolution(int[] sol){
 		for(int i = 0;i < node;i++)
-			solution[i] = sol[i];
+			this.solution[i] = sol[i];
+	}
+
+	public void setV(int v ){
+		this.v = v;
 	}
 
 	public void setStaticValue(int node,int[][] mat){
@@ -40,7 +39,7 @@ public class Solution{
 	}
 
 	public void mutate(int randPos,int randColor){
-		solution[randPos]=randColor;
+		this.solution[randPos]=randColor;
 	}
 
 	public void addVio(){
