@@ -10,7 +10,7 @@ public class Output{
 		System.out.println("↑y");
 		for(int i = 0;i < mat.length;i++){
 			System.out.print("|");
-			for(int j = 0;j < mat.length;j++) System.out.printf("%3d " ,mat[i][j]);
+			for(int j = 0;j < mat[i].length;j++) System.out.printf("%d " ,mat[i][j]);
 			System.out.println();
 		}
 		System.out.println("------------------------>x");
@@ -58,13 +58,13 @@ public class Output{
 		}
 	}
 
-	public static void exCsv_Graph(int[] vio){
+	public static void exCsv_Graph(int[] x1,int[] y1,int[] z1){
 		try{
 			//FileWriterクラスのインスタンス作成
-			PrintWriter fw = new PrintWriter(new BufferedWriter(new FileWriter("HI.csv")));
+			PrintWriter fw = new PrintWriter(new BufferedWriter(new FileWriter("ES.csv")));
 			//ファイルに書き込み
-			for(int i = 0;i < vio.length;i++){
-				fw.print(i+","+vio[i]);                                                                                                                                
+			for(int i = 0;i < x1.length;i++){
+				fw.print(i+","+x1[i]+","+y1[i]+","+z1[i]);                                                                                                                                
 				fw.println();
 			}
 			System.out.println("ファイルに書き込みました");
