@@ -5,6 +5,8 @@ public class Solution{
 	static int node;
 	public int v;
 	static int[][] graph;
+	public double fitnessScaling;
+	public double fitness;
 	//staticにしたらクラス間で共有される
 	public int[] solution;
 
@@ -17,6 +19,7 @@ public class Solution{
 		for(int i = 0;i < node;i++)
 			solution[i] = 0;
 		v = 100;
+		fitness = 100;
 	}
 
 	public void setSolution(int[] sol){
@@ -26,6 +29,14 @@ public class Solution{
 
 	public void setV(int v ){
 		this.v = v;
+	}
+
+	public void setFitness(double f){
+		this.fitness = f;
+	}
+
+	public void setFitnessScaling(double fs){
+		this.fitnessScaling = fs;
 	}
 
 	public void setStaticValue(int node,int[][] mat){
