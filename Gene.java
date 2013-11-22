@@ -69,30 +69,22 @@ public class Gene{
 			double f = gene[i].fitness;
 			//スケーリング
 			if(scalingFlag==1){  //線形スケーリング
-				gene[i].setFitnessScaling((f-fmin)/(fmax-fmin));
-			//	System.out.println(f+"==="+fmax+"==="+fmin);    
-			//	System.out.println(gene[i].fitness);    
-			//if(gene[i].fitness==1)System.out.println(i);
-			//dump(gene[31].solution);
+				double fs = (f-fmin)/(fmax-fmin);
+				gene[i].setFitnessScaling(fs);
 			}else if(scalingFlag==2){ //ベキ乗スケーリング
-				gene[i].setFitnessScaling(Math.pow(f,this.d));
+				double fs = Math.pow(f,this.d);
+				gene[i].setFitnessScaling(fs);
 			}
 		}
 		//適応度が小さい順にソート
 		Arrays.sort(gene,new MyfitnessComp());
-		//    for(int i = 0;i < size;i++)
-		//
-		//			System.out.println("MAx"+gene[i].fitness+"-");           
 	}
 
 	//(4)選択、エリート保存とルーレット戦略(5)交叉、一様交叉
 	public void selection(){
 		double total = 0;
-		for(int i = 0;i < size;i++)//{
+		for(int i = 0;i < size;i++)
 			total += gene[i].fitnessScaling;
-		//System.out.println(gene[i].fitnessScaling);
-		//}
-		//System.out.println("total:"+total);
 		//世代共通のマスクビット
 		for(int i = 0;i < node;i++)
 			maskbit[i] = rnd.nextInt(2);
@@ -100,37 +92,27 @@ public class Gene{
 		for(int j = 0;j < size;j+=2){
 			int father = roulette(total);
 			int mother = roulette(total);			
-			//System.out.println(father+"fa-mo"+mother);
 			for(int i = 0;i < node;i++){
 				solution[i]  = gene[father].solution[i];
 				solution2[i] = gene[mother].solution[i];
 			}
 			//一様交叉
 			crossover(solution,solution2,maskbit);
-			//dump(solution);
-			//System.out.println(father+"."+mother);
-			//System.out.println(j+"============================");
-			//dump(tmpGene[j+1].solution);
-				//一時的にtmpGeneに退避
-				tmpGene[j].setSolution(solution);
-				tmpGene[j+1].setSolution(solution2);
+			//一時的にtmpGeneに退避
+			tmpGene[j].setSolution(solution);
+			tmpGene[j+1].setSolution(solution2);
 		}
-		//for(int i = 0;i < size;i++)
-		//	System.out.println(i+":"+gene[i].fitness+"-");  
-		//System.out.println(gene[size-1].fitness);
 		//エリートの保存
 		for(int i = 0;i < node;i++)
 			tmpGene[size].solution[i] = gene[size-1].solution[i];
-		//System.out.println("MAx"+gene[size-1].fitness+"-");
-		//setFitness();
 		for(int i = 0;i < size+1;i++){
 			tmpGene[i].addVio();
 			double t = tmpGene[i].v;
 			tmpGene[i].setFitness(1-t / m);
 		}	
 		Arrays.sort(tmpGene,new MyfitnessComp());
-		//for(int i = 0;i < size+1;i++)   
-		//	System.out.println("==============="+tmpGene[i].fitness+"-");    
+		mutate();
+		Arrays.sort(tmpGene,new MyfitnessComp());
 
 		//tmpから本配列geneにコピー。
 		//エリート戦略だから適応度最小を捨てる
@@ -140,8 +122,6 @@ public class Gene{
 			gene[i-1].setSolution(solution);
 		}
 		setFitness();		
-		//for(int i = 0;i < size;i++)           
-		//	System.out.println(i+":"+gene[i].fitness+"-");    
 	}
 
 	//一様交叉,solutionとsolution2を交叉させて保存
@@ -196,7 +176,7 @@ public class Gene{
 
 	//適応度の最大値を表示し返す
 	public double getFitnessMaxNumber(){
-		System.out.println(gene[size-1].fitness);
+		//System.out.println(gene[size-1].fitness);
 		return gene[size-1].fitness;
 	}
 
@@ -206,13 +186,13 @@ public class Gene{
 		for(int i = 0;i < size;i++)
 			tmp += gene[i].fitness;
 		tmp/=size;
-		System.out.println(tmp);
+		//System.out.println(tmp);
 		return tmp;	
 	}
 
 	//適応度の最小値を表示し返す
 	public double getFitnessMinNumber(){
-		System.out.println(gene[0].fitness);
+		//System.out.println(gene[0].fitness);
 		return gene[0].fitness;
 	}
 
@@ -226,37 +206,46 @@ public class Gene{
 
 	public static void main(String args[]){
 		Matrix mat = new Matrix();
-		int seed = 139;
+		int seed = 157;
 		int node = 90;
-		int size = 100;
+		int size = 1000;
 		int m = node*(node-1)/4;
 		mat.setMatrix(node,m,149);
 		mat.makeMatrix();
 		Gene test1 = new Gene();
 		test1.setGraph(mat.getMat());
-		test1.setValue(0.2,seed,node,m,size,1,3);
+		test1.setValue(0.1,seed,node,m,size,2,4);
 		test1.setFirstGene();
 		int count=0;
 		int state = 0;
 		test1.setFitness();
-		while(count<10000){
+		double[] fmin = new double[2001];
+		double[] fave = new double[2001];  
+		double[] fmax = new double[2001];  
+		for(int i = 0;i < 2001;i++){
+			fmax[i] = 0;
+			fmin[i] = 0;
+			fave[i] = 0;
+		}
+		while(count<2000){
 			count++;
-			//終了条件(探索成功かエリートが進化しなくなるまで)
-			//System.out.println("====="+test1.gene[299].fitness);   
-			//エリート保存のときと値が違うのは突然変異をしてるから
-			//System.out.println("maxnumber:"+test1.gene[299].fitness);
-			
+			//終了条件(探索成功まで)
+			System.out.print(count+":");
 			if(test1.getFitnessMaxNumber()==1){
 				state = 1;
 				test1.dump(test1.gene[size-1].solution);
 				break;
 			}
+			fmax[count] = test1.getFitnessMaxNumber();
+		  fave[count] = test1.getFitnessAveNumber();	
+			fmin[count] = test1.getFitnessMinNumber();
 			//以下実際の処理
 			//適応度評価
 			test1.setFitness();
 			test1.selection();//選択し交叉
-			test1.mutate();
+			//test1.mutate();
 		}
+		Output.exCsv_Graph(fmax,fave,fmin);
 		//break後の処理
 		String s = (state==1)? "success":"fail";
 		System.out.println(s);
