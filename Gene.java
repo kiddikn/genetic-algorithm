@@ -61,26 +61,38 @@ public class Gene{
 			if(fmax<gene[i].fitness)fmax = gene[i].fitness;
 			if(fmin>gene[i].fitness)fmin = gene[i].fitness; 
 		}
-		if(fmax==fmin){
-			System.out.println("fmax is equal to fmin.");
-			return;
-		}
-		for(int i = 0;i < size;i++){             
-			double f = gene[i].fitness;
-			//スケーリング
-			if(scalingFlag==1){  //線形スケーリング
-				double fs = (f-fmin)/(fmax-fmin);
-				gene[i].setFitnessScaling(fs);
-			}else if(scalingFlag==2){ //ベキ乗スケーリング
-				double fs = Math.pow(f,this.d);
-				gene[i].setFitnessScaling(fs);
+		if(fmax!=fmin){
+			for(int i = 0;i < size;i++){             
+				double f = gene[i].fitness;
+				//スケーリング
+				if(scalingFlag==1){  //線形スケーリング
+					double fs = (f-fmin)/(fmax-fmin); 
+					gene[i].setFitnessScaling(fs);
+				}else if(scalingFlag==2){ //ベキ乗スケーリング
+					double fs = Math.pow(f,this.d);
+					gene[i].setFitnessScaling(fs);
+				}
+			}
+		}else{ 
+			for(int i = 0;i < size;i++){
+				double f = gene[i].fitness;   
+				if(scalingFlag==1){ 
+					//System.out.println("fmax is equal to fmin.");
+					//double fs = (f-fmin+1)/(fmax-fmin+1); 
+					gene[i].setFitnessScaling(f);
+				}else if(scalingFlag==2){
+					double fs = Math.pow(f,this.d);  
+					gene[i].setFitnessScaling(fs);        
+				}
 			}
 		}
+
+
 		//適応度が小さい順にソート
 		Arrays.sort(gene,new MyfitnessComp());
 	}
 
-	//(4)選択、エリート保存とルーレット戦略(5)交叉、一様交叉
+	//(4)選択、エリート保存とルーレット戦略(5)交叉、一様交叉(6)突然変異
 	public void selection(){
 		double total = 0;
 		for(int i = 0;i < size;i++)
@@ -203,54 +215,55 @@ public class Gene{
 		System.out.println();   
 	}
 
+	public int[] getSolution(int i){
+		return gene[i].solution;
+	}
+
 
 	public static void main(String args[]){
+		
+		Gene[] test = new Gene[40];
 		Matrix mat = new Matrix();
-		int seed = 157;
-		int node = 90;
-		int size = 1000;
-		int m = node*(node-1)/4;
-		mat.setMatrix(node,m,149);
-		mat.makeMatrix();
-		Gene test1 = new Gene();
-		test1.setGraph(mat.getMat());
-		test1.setValue(0.1,seed,node,m,size,2,4);
-		test1.setFirstGene();
-		int count=0;
-		int state = 0;
-		test1.setFitness();
-		double[] fmin = new double[2001];
-		double[] fave = new double[2001];  
-		double[] fmax = new double[2001];  
-		for(int i = 0;i < 2001;i++){
-			fmax[i] = 0;
-			fmin[i] = 0;
-			fave[i] = 0;
-		}
-		while(count<2000){
-			count++;
-			//終了条件(探索成功まで)
-			System.out.print(count+":");
-			if(test1.getFitnessMaxNumber()==1){
-				state = 1;
-				test1.dump(test1.gene[size-1].solution);
-				break;
+		int[] seeds = {113,127,131,139,151,157,163,251,257,271};
+		int[] nodes = {30,60,120,150};   
+		int testcount = 0;  
+		int rep = 1000;
+		int state;
+		int size = 100;
+		for(int i = 0;i < nodes.length;i++){          
+			for(int j = 0;j < seeds.length;j++){//jはseeds    
+				state = 0;
+				int node = nodes[i];  
+				double ans = 0;
+				//int m = node * 3;          //疎結合                
+				int m = node*(node-1)/4;   //密結合             
+				mat.setMatrix(node,m,149);    
+				mat.makeMatrix();     
+				test[testcount] = new Gene();
+				test[testcount].setGraph(mat.getMat());      
+				test[testcount].setValue(0.1,seeds[j],node,m,size,1,4);
+				test[testcount].setFirstGene();           
+				int count = 0;     
+				while(count < rep){      
+					count++;
+					ans = test[testcount].getFitnessMaxNumber();
+					if(ans==1){
+						state = 1;
+						test[testcount].dump(test[testcount].gene[size-1].solution);
+						break;
+					}
+					//以下実際の処理
+					//適応度評価
+					test[testcount].setFitness();
+					test[testcount].selection();//選択し交叉
+				}
+				String s = (state==1)? "success":"fail";
+				System.out.println(s + "node:"+nodes[i]+"seed:"+seeds[j]+"max"+ans);
+				testcount++;
 			}
-			fmax[count] = test1.getFitnessMaxNumber();
-		  fave[count] = test1.getFitnessAveNumber();	
-			fmin[count] = test1.getFitnessMinNumber();
-			//以下実際の処理
-			//適応度評価
-			test1.setFitness();
-			test1.selection();//選択し交叉
-			//test1.mutate();
 		}
-		Output.exCsv_Graph(fmax,fave,fmin);
-		//break後の処理
-		String s = (state==1)? "success":"fail";
-		System.out.println(s);
 	}
-	
+
 }
 
 
